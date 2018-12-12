@@ -1,0 +1,29 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- public User findUserByNameAndPwd(String name,String pwd); public User 
+	findUserByName(String name); public boolean insertUser(User user); public 
+	boolean updateUser(User user); -->
+<mapper namespace="xyz.zhhg.zblog.dao.MenuDao">
+	<resultMap type="xyz.zhhg.zblog.pojo.Menu" id="MenuList">
+		<id property="id" column="menu_id"/>
+		<result property="superiorId" column="menu_superior"/>
+		<result property="name" column="menu_name"/>
+		<result property="url" column="menu_url"/>
+		<result property="status" column="menu_status"/>
+		<result property="usetype" column="menu_usetype"/>
+	</resultMap>
+	
+	<select id="getMenuBySuperiorId" parameterType="java.math.BigInteger" resultMap="MenuList">
+		select * from menu 
+		<where>
+			menu_superior
+			<if test="#{superiorId}==null">
+				is null;
+			</if>
+			<if test="#{superiorId}!=null">
+				=#{superiorId};
+			</if>
+		</where>
+	</select>
+</mapper>
