@@ -30,10 +30,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public List<User> search(User t) {
 		// TODO Auto-generated method stub
-		return null;
+		return userDao.findUserByUser(t);
 	}
 	public List<User> searchByName(String name){
-		return userDao.selectUserByUserName();
+		return userDao.selectUserByUserName(name);
 	}
 
 

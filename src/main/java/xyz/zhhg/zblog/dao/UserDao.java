@@ -9,5 +9,6 @@ public interface UserDao {
 	public User findUserByName(String name);
 	public boolean insertUser(User user);
 	public boolean updateUser(User user);
-	public List<User> selectUserByUserName();
+	public List<User> selectUserByUserName(String name);
+	public List<User> findUserByUser(User t);
 }

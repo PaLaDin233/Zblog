@@ -11,6 +11,10 @@ public class Menu {
 	private int usetype;
 	
 	
+	public Menu() {
+		super();
+	}
+
 	public Menu(BigInteger id, BigInteger superiorId, String name, String url,
 			int status, int usetype) {
 		super();

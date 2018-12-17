@@ -15,6 +15,7 @@
 		<result property="status" column="user_status" />
 		<result property="email" column="user_email" />
 		<result property="phone" column="user_phone" />
+		<result property="headIcon" column="user_headicon"/>
 	</resultMap>
 	
 	<select id="findUserByNameAndPwd" resultMap="userResultMap">

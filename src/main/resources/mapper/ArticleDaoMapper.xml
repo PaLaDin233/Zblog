@@ -1,0 +1,73 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- public User findUserByNameAndPwd(String name,String pwd); public User 
+	findUserByName(String name); public boolean insertUser(User user); public 
+	boolean updateUser(User user); -->
+<mapper namespace="xyz.zhhg.zblog.dao.ArticleDao">
+	<resultMap type="xyz.zhhg.zblog.pojo.Article" id="articleResultMap">
+		<id property="id" column="blog_article_id" />
+		<result property="userId" column="user_id" />
+		<result property="title" column="blog_article_title"/>
+		<result property="createTime" column="blog_article_createtime"/>
+		<result property="modifiedDate" javaType="java.util.Date" jdbcType="DATE" column="blog_article_modifieddate"/>
+		<result property="status" column="blog_article_status"/>
+		<result property="details" column="blog_article_details" />
+		<result property="likes" column="blog_article_likes"/>
+		<result property="views" column="blog_article_views" />
+		<result property="commentNum" column="blog_article_commentnum"/>
+		<result property="img" column="blog_article_img"/>
+	</resultMap>
+	<insert id="saveArticle" parameterType="xyz.zhhg.zblog.pojo.Article">
+		insert into
+		article(
+			user_id,
+			blog_article_title,
+			blog_article_status,
+			blog_article_details
+		)
+		value(
+			#{userId},
+			#{title},
+			#{status},
+			#{details}
+		);
+
+	</insert>
+	<select id="findLastIns" resultType="java.math.BigInteger">
+    	SELECT LAST_INSERT_ID();
+    </select>
+	<select id="findArticle" parameterType="xyz.zhhg.zblog.pojo.Article" resultMap="articleResultMap">
+		select * from article
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+		 blog_article_status=#{status}
+			<if test="id!=null">
+				AND blog_article_id=#{id}
+			</if>
+			<if test="userId!=null">
+				AND user_id=#{userId}
+			</if>
+			<if test="title!=null">
+				AND title like #{title}
+			</if>
+			<if test="createTime!=null">
+				AND DATE_FORMAT(blog_article_createtime,"%Y-%m-%d") = DATE_FORMAT(#{createTime},"%Y-%m-%d");
+			</if>
+			<if test="modifiedDate!=null">
+				AND DATE_FORMAT(blog_article_modifieddate,"%Y-%m-%d") = DATE_FORMAT(#{modifiedDate!=null},"%Y-%m-%d");
+			</if>
+		</trim>
+		<trim prefix="ORDER BY" suffixOverrides=",">
+			<if test="views lt 0">
+				blog_article_commentnum,
+			</if>
+			<if test="likes lt 0">
+				blog_article_likes,
+			</if>
+			<if test="views lt 0">
+				blog_article_views,
+			</if>
+		</trim>
+	</select>
+
+</mapper>

@@ -34,6 +34,7 @@ public class UserController {
 		return loginedView;
 	}
 	
+	@RequestMapping("register")
 	public ModelAndView register(User user){
 		ModelAndView modelAndView =new ModelAndView("404.html");
 		boolean success=userService.regist(user);

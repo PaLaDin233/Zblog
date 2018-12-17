@@ -13,7 +13,7 @@ import xyz.zhhg.zblog.service.baseinterface.Searchable;
 public interface UserService extends Loginable<User>,Registable<User>,Searchable<User>{
 	@Override
 	public User login(String name, String pwd);
-	
+	@Override
 	public boolean regist(User t);
 	@Override
 	public List<User> search(User t);
