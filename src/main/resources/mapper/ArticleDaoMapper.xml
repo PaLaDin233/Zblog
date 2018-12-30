@@ -4,70 +4,179 @@
 <!-- public User findUserByNameAndPwd(String name,String pwd); public User 
 	findUserByName(String name); public boolean insertUser(User user); public 
 	boolean updateUser(User user); -->
-<mapper namespace="xyz.zhhg.zblog.dao.ArticleDao">
-	<resultMap type="xyz.zhhg.zblog.pojo.Article" id="articleResultMap">
+<mapper namespace="xyz.zhhg.zblog.web.dao.ArticleDao">
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Article" id="articleResultMap">
 		<id property="id" column="blog_article_id" />
 		<result property="userId" column="user_id" />
-		<result property="title" column="blog_article_title"/>
-		<result property="createTime" column="blog_article_createtime"/>
-		<result property="modifiedDate" javaType="java.util.Date" jdbcType="DATE" column="blog_article_modifieddate"/>
-		<result property="status" column="blog_article_status"/>
+		<result property="title" column="blog_article_title" />
+		<result property="createTime" javaType="java.util.Date"
+			jdbcType="TIMESTAMP" column="blog_article_createtime" />
+		<result property="modifiedDate" javaType="java.util.Date"
+			jdbcType="TIMESTAMP" column="blog_article_modifieddate" />
+		<result property="status" column="blog_article_status" />
 		<result property="details" column="blog_article_details" />
-		<result property="likes" column="blog_article_likes"/>
+		<result property="likes" column="blog_article_likes" />
 		<result property="views" column="blog_article_views" />
-		<result property="commentNum" column="blog_article_commentnum"/>
-		<result property="img" column="blog_article_img"/>
+		<result property="commentNum" column="blog_article_commentnum" />
+		<result property="img" column="blog_article_img" />
+		
 	</resultMap>
-	<insert id="saveArticle" parameterType="xyz.zhhg.zblog.pojo.Article">
+	<insert id="insertArticle" parameterType="xyz.zhhg.zblog.web.pojo.Article">
 		insert into
 		article(
-			user_id,
-			blog_article_title,
-			blog_article_status,
-			blog_article_details
+		user_id
+		,blog_article_title
+		,blog_article_status
+		,blog_article_details
+		,blog_article_modifieddate
 		)
 		value(
-			#{userId},
-			#{title},
-			#{status},
-			#{details}
+		#{userId}
+		,#{title}
+		,#{status}
+		,#{details}
+		,#{modifiedDate}
 		);
 
 	</insert>
+
+	<!-- 批量删除文章通过文章id列表 ,列表为空则删除该作者的所有文章 -->
+	<delete id="deleteArticleByIdList">
+		delete from article
+		<where>
+			user_id=#{uid}
+			<if test="idList!=null and idList.size!=0">
+				and blog_article_id in
+				<foreach collection="idList" item="id" open="(" close=")"
+					separator=",">
+					#{id}
+				</foreach>
+			</if>
+
+		</where>
+		;
+	</delete>
+
+	<update id="updateArticle" parameterType="xyz.zhhg.zblog.web.pojo.Article">
+		update article
+		<set>
+			<if test="status!=0">
+				blog_article_status=#{status},
+			</if>
+			<if test="title!=null and title!=''">
+				blog_article_title=#{title},
+			</if>
+			<if test="modifiedDate!=null">
+				blog_article_modifieddate=#{modifiedDate},
+			</if>
+			<if test="details!=null">
+				blog_article_details=#{details},
+			</if>
+
+		</set>
+		where blog_article_id=#{id} and user_id=#{userId};
+	</update>
+
+	<update id="incViewNum">
+		update article
+		set
+		blog_article_views=blog_article_views+1
+		where blog_article_id=#{aid};
+	</update>
+
+
+
 	<select id="findLastIns" resultType="java.math.BigInteger">
-    	SELECT LAST_INSERT_ID();
-    </select>
-	<select id="findArticle" parameterType="xyz.zhhg.zblog.pojo.Article" resultMap="articleResultMap">
-		select * from article
+		SELECT LAST_INSERT_ID();
+	</select>
+
+	<!-- 获取所有文章评论数列表 -->
+	<sql id="selectComNum">
+		(
+		select
+		COUNT(${articleId}) as ${num},
+		${articleId}
+		from
+		${table}
+		GROUP BY ${articleId}
+		)as extratable
+		on
+		article.blog_article_id=extratable.${articleId}
+	</sql>
+
+	<!-- 文章概况 -->
+	<sql id="articleOutline">
+		blog_article_id,
+		user_id,
+		blog_article_title,
+		blog_article_createtime,
+		blog_article_views,
+		blog_article_commentnum
+	</sql>
+
+
+	<!-- 获取文章概况列表 -->
+	<select id="findArticle" parameterType="java.util.Map"
+		resultMap="articleResultMap">
+		select
+		<include refid="articleOutline"></include>
+		from
+		article LEFT JOIN
+		<include refid="selectComNum">
+			<property name="articleId" value="article_id" />
+			<property name="num" value="blog_article_commentnum" />
+			<property name="table" value="article_comment" />
+		</include>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-		 blog_article_status=#{status}
+			blog_article_status=#{status}
 			<if test="id!=null">
 				AND blog_article_id=#{id}
 			</if>
-			<if test="userId!=null">
+			<if test="userId!=null and userId!=0">
 				AND user_id=#{userId}
 			</if>
+			<if test="beginTime==null or endTime==null">
+				<if test="createTime!=null">
+					AND DATE_FORMAT(blog_article_createtime,"%Y-%m-%d") =
+					DATE_FORMAT(#{createTime},"%Y-%m-%d")
+				</if>
+				<if test="modifiedDate!=null">
+					AND DATE_FORMAT(blog_article_modifieddate,"%Y-%m-%d") =
+					DATE_FORMAT(#{modifiedDate},"%Y-%m-%d")
+				</if>
+			</if>
 			<if test="title!=null">
-				AND title like #{title}
-			</if>
-			<if test="createTime!=null">
-				AND DATE_FORMAT(blog_article_createtime,"%Y-%m-%d") = DATE_FORMAT(#{createTime},"%Y-%m-%d");
-			</if>
-			<if test="modifiedDate!=null">
-				AND DATE_FORMAT(blog_article_modifieddate,"%Y-%m-%d") = DATE_FORMAT(#{modifiedDate!=null},"%Y-%m-%d");
+				AND blog_article_title like #{title}
 			</if>
 		</trim>
-		<trim prefix="ORDER BY" suffixOverrides=",">
-			<if test="views lt 0">
-				blog_article_commentnum,
+
+		<trim prefix="ORDER BY" suffixOverrides="," suffix="DESC">
+			<if test="commentNumOrder==true">
+				blog_article_commentnum DESC,
 			</if>
-			<if test="likes lt 0">
-				blog_article_likes,
-			</if>
-			<if test="views lt 0">
-				blog_article_views,
-			</if>
+			<if test="viewsNumOrder">
+				blog_article_views DESC,
+			</if> 
+			<!-- <if test="likesNumOrder==true">
+				blog_article_likes DESC,
+			</if> -->
+			blog_article_createtime
 		</trim>
+		limit #{firstIndex},#{pageSize};
+	</select>
+	<!-- 获取文章详情 -->
+	<select id="getArticleDetailsByArticleId" resultMap="articleResultMap"
+		parameterType="java.math.BigInteger">
+		select * from article
+		where
+		blog_article_status = 0 and
+		blog_article_id=#{id};
+	</select>
+	
+	<select id="getPigeonholeDate" resultType="java.util.Date">
+		SELECT DATE_FORMAT(blog_article_createtime,#{format}) as d
+		FROM article
+		GROUP BY d
 	</select>
 
 </mapper>

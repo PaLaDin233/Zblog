@@ -51,7 +51,7 @@
 
     <!-- 扫描生成所有dao层 -->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="xyz.zhhg.zblog.dao"></property>
+        <property name="basePackage" value="xyz.zhhg.zblog.web.dao"></property>
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
     </bean>
     

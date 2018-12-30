@@ -1,0 +1,87 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- public User findUserByNameAndPwd(String name,String pwd); public User 
+	findUserByName(String name); public boolean insertUser(User user); public 
+	boolean updateUser(User user); -->
+<mapper namespace="xyz.zhhg.zblog.web.dao.CommentDao">
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Comment" id="commentResultMap">
+		<id column="id" property="id"/>
+		<result column="superior" property="superior"/>
+		<result column="detailes" property="details"/>
+		<result column="uid" property="uid"/>
+		<result column="uname" property="uname"/>
+		<result column="uemail" property="uemail"/>
+		<result column="cdate" property="cdate" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+	</resultMap>
+	
+	
+	<insert id="insertComment" parameterType="xyz.zhhg.zblog.web.pojo.Comment">
+		INSERT into comment(
+			comment_superior,comment_user_id,comment_details,comment_ancestor
+		)
+		value(
+			#{superior},#{uid},#{details},#{ancestor}
+		)
+	</insert>
+	
+	<insert id="insertArticleComment">
+		INSERT INTO article_comment(
+			article_id,comment_id
+		)
+		value(
+			#{aid},#{cid}
+		)
+	</insert>
+	
+	<select id="findLastIns" resultType="java.math.BigInteger">
+		SELECT LAST_INSERT_ID();
+	</select>
+	
+	<select id="findAncestor" resultType="java.math.BigInteger">
+		select comment_ancestor from comment
+		where comment_id=#{id}
+	</select>
+	<!-- 获取指定文章的评论id -->
+<!-- 	<sql id="">
+		select comment_id from article_comment
+		where article_id = #{aid}
+	</sql>
+	
+	从评论表中获取指定id的评论
+	<sql id="">
+		select comment_id,comment_user_id,comment_details,comment_superior from comment
+	</sql>
+	
+	从用户表中获取指定用户的用户信息
+	<select id="">
+		select user_id,user_name,user_email,user_ip from user
+		where user_id Exist
+	</select> -->
+	
+	
+	<!-- 获取指定文章的评论列表 -->
+	<select id="selectArticleComment" resultMap="commentResultMap">
+		SELECT
+			c.comment_id AS id,
+			c.comment_details AS detailes,
+			c.comment_superior AS superior,
+			c.comment_date as cdate,
+			u.user_name AS uname,
+			u.user_ip AS uip,
+			u.user_email AS uemail
+		FROM
+			COMMENT AS c,
+			USER AS u,
+			article_comment AS ac
+		WHERE
+			ac.article_id = #{id}
+			AND ac.comment_id = c.comment_id
+			AND u.user_id = c.comment_user_id
+		ORDER BY 
+			cdate desc;
+	</select>
+	
+	
+	
+</mapper>

@@ -4,8 +4,8 @@
 <!-- public User findUserByNameAndPwd(String name,String pwd); public User 
 	findUserByName(String name); public boolean insertUser(User user); public 
 	boolean updateUser(User user); -->
-<mapper namespace="xyz.zhhg.zblog.dao.MenuDao">
-	<resultMap type="xyz.zhhg.zblog.pojo.Menu" id="MenuList">
+<mapper namespace="xyz.zhhg.zblog.web.dao.MenuDao">
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Menu" id="MenuList">
 		<id property="id" column="menu_id"/>
 		<result property="superiorId" column="menu_superior"/>
 		<result property="name" column="menu_name"/>

@@ -7,8 +7,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import xyz.zhhg.zblog.controller.MenuController;
-import xyz.zhhg.zblog.pojo.Menu;
+import xyz.zhhg.zblog.web.controller.admin.MenuController;
+import xyz.zhhg.zblog.web.pojo.Menu;
 
 public class MenuTest {
 	public static void main(String[] args) {

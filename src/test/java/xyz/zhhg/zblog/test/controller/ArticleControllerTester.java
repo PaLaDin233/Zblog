@@ -10,12 +10,15 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 
-import xyz.zhhg.zblog.controller.ArticleController;
-import xyz.zhhg.zblog.pojo.Article;
+import xyz.zhhg.zblog.utils.paging.Paging;
+import xyz.zhhg.zblog.web.controller.ArticleController;
+import xyz.zhhg.zblog.web.pojo.Article;
+import xyz.zhhg.zblog.web.pojo.form.ArticleSearchForm;
 
 public class ArticleControllerTester {
 
 	public static ArticleController controller; 
+	ModelAndView view;
 	
 	@SuppressWarnings("resource")
 	@BeforeClass
@@ -30,18 +33,36 @@ public class ArticleControllerTester {
 		article.setUserId(new BigInteger("16"));
 		article.setDetails("#1这是博客内容！");
 		
-		ModelAndView andView=controller.saveArticle(article);
+		controller.saveArticle(null,article);
 		//System.out.println(andView.getModel().get("msg"));
-		assertEquals(andView.getModel().get("msg"),"添加失败");
 	}
 	
 	@Test
 	public void loadArticleTest(){
 		Article article=new Article();
-		article.setId(new BigInteger("1"));
-		ModelAndView andView=controller.loadArticle(article.getId());
+		ModelAndView andView=controller.getArticle("19",null);
+		article=(Article) andView.getModelMap().get("article");
+		System.out.println(article);
 	}
 	
+	@Test
+	public void findUserArticleTest(){
+		
+		view=controller.getAllArticle("3", 0,null);
+		Paging page=(Paging) view.getModel().get("page");
+		System.out.println(page.getResults());
+	}
+	
+	@Test
+	public void findArticleByForm(){
+		ArticleSearchForm articleSearchForm=new ArticleSearchForm();
+		//articleSearchForm.setTitle("标题");
+		
+		view=controller.findArticleByConditionMap(1, articleSearchForm, null);
+		Paging page=(Paging) view.getModel().get("page");
+		System.out.println(page.getResults());
+		
+	}
 	@AfterClass
 	public static void after(){
 		
