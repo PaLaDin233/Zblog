@@ -11,6 +11,8 @@ import java.sql.Date;
 public class TempFileUtil {
 	public static void main(String[] args) throws IOException {
 		Date date=new Date(System.currentTimeMillis());
+		
+		System.out.println(date.toLocalDate());
 	
 	}
 }

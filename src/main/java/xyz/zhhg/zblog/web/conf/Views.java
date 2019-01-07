@@ -51,6 +51,12 @@ public interface Views {
 	 * 文章列表页
 	 */
 	String ARTICLES = "/article/articles";
+	
+	/**
+	 * 用户文章列表页
+	 */
+	String USERS_ARTICLE = "/user/articles";
+	
 	/**
 	 * 文章详情页
 	 */
@@ -61,6 +67,22 @@ public interface Views {
 	 */
 	String ARTICLE_EDIT="/user/article/articleEdit";
 	
+	/**
+	 * 用户信息页
+	 */
+	String ACCOUNT_PROFILE = "/user/account/profile";
+	
+	
+	/**
+	 * 后台管理首页
+	 */
+	String ADMIN = "/admin/admin";
+	
+	/**
+	 * 功能管理页
+	 */
+	String MENUMANAGER = "/admin/menu/MenuManager";
+	
 	String HOME_FEEDS = "/home/feeds";
 	String HOME_POSTS = "/home/posts";
 	String HOME_COMMENTS = "/home/comments";
@@ -70,10 +92,9 @@ public interface Views {
 	String HOME_NOTIFIES = "/home/notifies";
 
 	String TA_HOME = "/ta/home";
-	String ACCOUNT_AVATAR = "/account/avatar";
-	String ACCOUNT_PASSWORD = "/account/password";
-	String ACCOUNT_PROFILE = "/account/profile";
-	String ACCOUNT_EMAIL = "/account/email";
+	String ACCOUNT_AVATAR = "/user/account/avatar";
+	String ACCOUNT_PASSWORD = "/user/account/password";
+	String ACCOUNT_EMAIL = "/user/account/email";
 
 	String BLOG_UPLOAD = "/post/upload";
 	
@@ -88,6 +109,14 @@ public interface Views {
 	String ROUTE_POST_PUBLISH = "/group/%s/post";
 	String ROUTE_POST_INDEX = "/group/%s/index";
 	String ROUTE_POST_VIEW = "/group/%s/view";
+
+	String MESSAGE_BOARD = "/user/messageboard";
+
+
+
+	
+
+	
 
 	
 

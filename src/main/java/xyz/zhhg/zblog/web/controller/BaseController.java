@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 
 import xyz.zhhg.zblog.utils.paging.Paging;
 import xyz.zhhg.zblog.web.conf.Views;
+import xyz.zhhg.zblog.web.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,7 +56,7 @@ public class BaseController {
 		if (pn == null || pn == 0) {
 			pn = 1;
 		}
-		return wrapPage(pn, 10);
+		return wrapPage(pn, 7);
 	}
 
 	/**
@@ -143,6 +144,10 @@ public class BaseController {
 	      }
 	    }
 		
+	}
+	
+	protected User getUser(HttpServletRequest request){
+		return (User)request.getSession().getAttribute("user");
 	}
 	
 }

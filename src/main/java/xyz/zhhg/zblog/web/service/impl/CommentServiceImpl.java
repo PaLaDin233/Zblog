@@ -42,6 +42,7 @@ public class CommentServiceImpl implements CommentService{
 		//设置评论为文章的root评论
 		//comment.setAncestor(new BigInteger("0"));
 		comment.setSuperior(new BigInteger("0"));
+		if(comment.getUid()==null)comment.setUid(new BigInteger("0"));
 		//插入评论到评论表
 		insert(comment);
 		

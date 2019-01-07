@@ -1,8 +1,12 @@
 package xyz.zhhg.zblog.web.pojo.form;
 
 import java.math.BigInteger;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author 清居
@@ -48,6 +52,9 @@ public class ArticleSearchForm {
 		return title;
 	}
 	public void setTitle(String title) {
+		if(title!=null){
+			if(title.trim().length()==0)title=null;
+		}
 		this.title = title;
 	}
 	public Date getCreateTime() {
@@ -55,6 +62,15 @@ public class ArticleSearchForm {
 	}
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+	public void setCreateTime(String createTime) {
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd");
+		try{
+			this.createTime =format.parse(createTime) ;			
+		}catch(Exception e){
+			e.printStackTrace();
+			this.createTime =null;
+		}
 	}
 	public Date getModifiedDate() {
 		return modifiedDate;

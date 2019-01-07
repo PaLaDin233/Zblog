@@ -25,6 +25,7 @@ public class TestController extends BaseController{
 	}
 	@RequestMapping("/test")
 	public @ResponseBody void test(HttpServletRequest request,@RequestBody String str){
+		System.out.println("hello world");
 		Map<String,String[]> map=request.getParameterMap();
 		
 		for (Entry<String, String[]> entry : map.entrySet()) {

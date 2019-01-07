@@ -19,7 +19,7 @@
 		<result property="views" column="blog_article_views" />
 		<result property="commentNum" column="blog_article_commentnum" />
 		<result property="img" column="blog_article_img" />
-		
+
 	</resultMap>
 	<insert id="insertArticle" parameterType="xyz.zhhg.zblog.web.pojo.Article">
 		insert into
@@ -41,21 +41,29 @@
 	</insert>
 
 	<!-- 批量删除文章通过文章id列表 ,列表为空则删除该作者的所有文章 -->
-	<delete id="deleteArticleByIdList">
-		delete from article
-		<where>
-			user_id=#{uid}
-			<if test="idList!=null and idList.size!=0">
+	<!-- <delete id="deleteArticleByIdList"> delete from article <where> user_id=#{uid} 
+		<if test="idList!=null and idList.size!=0"> and blog_article_id in <foreach 
+		collection="idList" item="id" open="(" close=")" separator=","> #{id} </foreach> 
+		</if> </where> ; </delete> -->
+
+	<update id="deleteArticleByIdList">
+		update article set blog_article_status=1
+		where user_id=#{uid}
+		<choose>
+			<when test="idList!=null and idList.size!=0">
 				and blog_article_id in
 				<foreach collection="idList" item="id" open="(" close=")"
 					separator=",">
 					#{id}
 				</foreach>
-			</if>
-
-		</where>
+			</when>
+			<otherwise>
+				and 1!=1
+			</otherwise>
+			
+		</choose>
 		;
-	</delete>
+	</update>
 
 	<update id="updateArticle" parameterType="xyz.zhhg.zblog.web.pojo.Article">
 		update article
@@ -111,6 +119,7 @@
 		blog_article_title,
 		blog_article_createtime,
 		blog_article_views,
+		blog_article_details,
 		blog_article_commentnum
 	</sql>
 
@@ -156,14 +165,46 @@
 			</if>
 			<if test="viewsNumOrder">
 				blog_article_views DESC,
-			</if> 
-			<!-- <if test="likesNumOrder==true">
-				blog_article_likes DESC,
-			</if> -->
+			</if>
+			<!-- <if test="likesNumOrder==true"> blog_article_likes DESC, </if> -->
 			blog_article_createtime
 		</trim>
 		limit #{firstIndex},#{pageSize};
 	</select>
+
+	<!-- 获取满足指定条件的文章个数 -->
+	<select id="selectCountArticle" parameterType="java.util.Map"
+		resultType="int">
+		select
+		count(blog_article_id)
+		from
+		article
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			blog_article_status=#{status}
+			<if test="id!=null">
+				AND blog_article_id=#{id}
+			</if>
+			<if test="userId!=null and userId!=0">
+				AND user_id=#{userId}
+			</if>
+			<if test="beginTime==null or endTime==null">
+				<if test="createTime!=null">
+					AND DATE_FORMAT(blog_article_createtime,"%Y-%m-%d") =
+					DATE_FORMAT(#{createTime},"%Y-%m-%d")
+				</if>
+				<if test="modifiedDate!=null">
+					AND DATE_FORMAT(blog_article_modifieddate,"%Y-%m-%d") =
+					DATE_FORMAT(#{modifiedDate},"%Y-%m-%d")
+				</if>
+			</if>
+			<if test="title!=null">
+				AND blog_article_title like #{title}
+			</if>
+		</trim>
+		;
+	</select>
+
+
 	<!-- 获取文章详情 -->
 	<select id="getArticleDetailsByArticleId" resultMap="articleResultMap"
 		parameterType="java.math.BigInteger">
@@ -172,11 +213,14 @@
 		blog_article_status = 0 and
 		blog_article_id=#{id};
 	</select>
-	
+
 	<select id="getPigeonholeDate" resultType="java.util.Date">
-		SELECT DATE_FORMAT(blog_article_createtime,#{format}) as d
-		FROM article
-		GROUP BY d
+		SELECT
+		DATE_FORMAT(blog_article_createtime,#{format}) as PigeonholeDate
+		FROM
+		article
+		GROUP BY PigeonholeDate
+		desc;
 	</select>
 
 </mapper>

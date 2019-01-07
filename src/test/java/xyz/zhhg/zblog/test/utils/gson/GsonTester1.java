@@ -14,7 +14,7 @@ public class GsonTester1 {
 	
 	@Test
 	public void JsonToJavaBean(){
-		User user=new User(new BigInteger("5"), "n123", "p321", "0", "123.123.123.1", 0, "123@123.qq", "12345678911");
+		User user=new User(new BigInteger("5"), "n123", "p321", 0, "123.123.123.1", 0, "123@123.qq", "12345678911");
 		Gson gson=new Gson();
 		String uJson=gson.toJson(user);
 		User u=gson.fromJson(uJson,User.class);

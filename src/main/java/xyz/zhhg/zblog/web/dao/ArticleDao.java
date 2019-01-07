@@ -36,6 +36,13 @@ public interface ArticleDao {
 	 */
 	public List<Article> findArticle(Map<String, Object> map);
 	
+	/**
+	 * 获取满足条件的所有文章数
+	 * @param map
+	 * @return 满足条件的文章总数
+	 */
+	public int selectCountArticle(Map<String, Object> map);
+	
 	
 	public Article getArticleDetailsByArticleId(BigInteger id);
 	

@@ -74,10 +74,30 @@ public class ArticleDaoTester {
 	}
 	
 	@Test
+	public void selectCountArticle(){
+		ArticleSearchForm javaBean=new ArticleSearchForm();	
+		javaBean.setTitle("%标题%");
+		Map<String,Object> map=BeanUtils.java2Map(javaBean);
+		System.out.println(articleDao.selectCountArticle(map));
+	}
+	
+	@Test
 	public void getPigeonholeDate(){
-		List<Date> ds=articleDao.getPigeonholeDate("%y%m%d");
+		List<Date> ds=articleDao.getPigeonholeDate("%Y%m%d");
 		for (Date date : ds) {
 			System.out.println(date);
 		}
 	}
+	
+	@Test
+	public void update(){
+		Article article=new Article();
+		article=articleDao.getArticleDetailsByArticleId(new BigInteger("18"));
+		article.setTitle("新的标题");
+		articleDao.updateArticle(article);
+		article=articleDao.getArticleDetailsByArticleId(new BigInteger("18"));
+		System.out.println(article);
+		
+	}
+	
 }

@@ -21,7 +21,10 @@
 			comment_superior,comment_user_id,comment_details,comment_ancestor
 		)
 		value(
-			#{superior},#{uid},#{details},#{ancestor}
+			#{superior},
+			#{uid},
+			#{details},
+			#{ancestor}
 		)
 	</insert>
 	

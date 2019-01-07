@@ -1,7 +1,5 @@
 package xyz.zhhg.zblog.test.controller;
 
-import static org.junit.Assert.*;
-
 import java.math.BigInteger;
 
 import org.junit.AfterClass;
@@ -48,7 +46,7 @@ public class ArticleControllerTester {
 	@Test
 	public void findUserArticleTest(){
 		
-		view=controller.getAllArticle("3", 0,null);
+		view=controller.getAllArticle("3", 0);
 		Paging page=(Paging) view.getModel().get("page");
 		System.out.println(page.getResults());
 	}
@@ -58,7 +56,7 @@ public class ArticleControllerTester {
 		ArticleSearchForm articleSearchForm=new ArticleSearchForm();
 		//articleSearchForm.setTitle("标题");
 		
-		view=controller.findArticleByConditionMap(1, articleSearchForm, null);
+		view=controller.findArticles(1, articleSearchForm);
 		Paging page=(Paging) view.getModel().get("page");
 		System.out.println(page.getResults());
 		

@@ -1,6 +1,7 @@
 package xyz.zhhg.zblog.web.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 
 import javax.servlet.ServletException;
@@ -31,15 +32,14 @@ public class CommentController extends BaseController{
 		try{
 			user=(User) request.getSession().getAttribute("user");			
 			comment.setUid(user.getId());
-			
 		}
 		catch(Exception e){
 			
 		}
-		System.out.println("aid"+aid+"=comment"+comment);
 		try{
 			commentService.discuss(comment, aid);
 			response.getWriter().write("评论成功");
+			response.sendRedirect("/Zblog/getArticle/aid"+aid);
 		}catch(Exception e){
 			response.getWriter().write(e.getMessage());		
 		}

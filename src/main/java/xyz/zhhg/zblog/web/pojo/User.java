@@ -6,7 +6,7 @@ public class User {
 	private BigInteger id;
 	private String name;
 	private String pwd;
-	private String type;
+	private int type;
 	private String ip;
 	private int status;
 	private String email;
@@ -15,7 +15,7 @@ public class User {
 	
 	public User(){}
 	
-	public User(BigInteger id, String name, String pwd, String type, String ip,
+	public User(BigInteger id, String name, String pwd, int type, String ip,
 			int status, String email, String phone) {
 		this.id = id;
 		this.name = name;
@@ -50,10 +50,10 @@ public class User {
 	public void setPwd(String pwd) {
 		this.pwd = pwd;
 	}
-	public String getType() {
+	public int getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 	public String getIp() {

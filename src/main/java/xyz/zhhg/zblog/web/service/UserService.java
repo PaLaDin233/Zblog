@@ -1,11 +1,14 @@
 package xyz.zhhg.zblog.web.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
+import xyz.zhhg.zblog.lang.exception.UpdateException;
 import xyz.zhhg.zblog.lang.exception.userexception.loginexception.LoginException;
 import xyz.zhhg.zblog.web.pojo.User;
 import xyz.zhhg.zblog.web.service.baseinterface.Deleteable;
@@ -36,10 +39,14 @@ public interface UserService extends Loginable<User>,Insertable<User>,Deleteable
 	 * @param session 登陆成功之后将用户信息放入的session
 	 * @throws Exception 登陆异常
 	 */
-	public abstract void login(String username, String password, HttpSession session) throws Exception;
+	public abstract void login(String username, String password, HttpSession session) throws LoginException;
 
 	void login(User user, HttpSession session) throws LoginException;
 
 	void login(String name, String pwd) throws Exception;
+
+	void update(User t, String newPwd) throws UpdateException;
+	
+	public User getUserInfoById(BigInteger id);
 	
 }

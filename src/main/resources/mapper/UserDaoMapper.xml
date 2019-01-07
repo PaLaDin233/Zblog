@@ -20,12 +20,12 @@
 	
 	<select id="findUserByNameAndPwd" resultMap="userResultMap">
 		select * from user
-		where user_name = #{0} and user_password=#{1}
+		where user_name = #{0} and user_password=#{1};
 	</select>
 	
 	<select id="findUserByName" parameterType="string" resultMap="userResultMap">
 		select * from user
-		where user_name = #{name}
+		where user_name = #{name};
 	</select>
 	
 	<insert id="insertUser" parameterType="xyz.zhhg.zblog.web.pojo.User">
@@ -43,12 +43,9 @@
 	<update id="updateUser" parameterType="xyz.zhhg.zblog.web.pojo.User">
 		update user
 		<set>
-			<if test="id !=0">
-				user_id=#{id},
-			</if>
-			<if test="name !=null">
+			<!-- <if test="name !=null">
 				user_name=#{name},
-			</if>
+			</if> -->
 			<if test="pwd !=null">
 				user_password=#{pwd},
 			</if>
@@ -68,6 +65,17 @@
 				user_phone=#{phone},
 			</if>
 		</set>
-		where user_id=#{id}
+		where user_id=#{id};
 	</update>
+	
+	<sql id="userInfo">
+		user_id,user_name,user_ip,user_email,user_phone ,user_type 
+	</sql>
+	<select id="getUserInfoById" parameterType="java.math.BigInteger" resultMap="userResultMap">
+		select <include refid="userInfo"></include> 
+		from user where user_id=#{id};
+	</select>
+	
+	
+	
 </mapper>

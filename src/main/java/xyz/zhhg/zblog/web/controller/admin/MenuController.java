@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import xyz.zhhg.zblog.lang.exception.SearchException;
 import xyz.zhhg.zblog.web.pojo.Menu;
 import xyz.zhhg.zblog.web.service.MenuService;
 
@@ -19,13 +20,14 @@ public class MenuController {
 	@RequestMapping("/getMenuList")
 	public ModelAndView getMenuList(BigInteger superiorId){
 		ModelAndView view=new ModelAndView();
-		List<Menu> list=menuService.getMenuListBySuperiorId(superiorId);
-		if(list==null||list.isEmpty()){
-			//TODO 不存在该菜单
-		}else{
-			view.addObject("menuList"+superiorId, list);
-			//TODO 设置返回地址
+		List<Menu> list;
+		try {
+			list = menuService.getMenuListBySuperiorId(superiorId);
+			view.addObject("menuList", list);
 			view.setViewName("");
+		} catch (SearchException e) {
+			view.addObject("msg", e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return view;

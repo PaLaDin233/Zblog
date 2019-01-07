@@ -1,35 +1,46 @@
 package xyz.zhhg.zblog.web.controller.user;
 
 import java.io.IOException;
-import java.util.Random;
+import java.math.BigInteger;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.websocket.Session;
 
-import org.apache.shiro.web.session.HttpServletSession;
-import org.apache.tools.ant.types.CommandlineJava.SysProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import xyz.zhhg.zblog.lang.exception.InsertException;
-import xyz.zhhg.zblog.lang.exception.userexception.registexception.UserExistException;
+import xyz.zhhg.zblog.lang.exception.SearchException;
+import xyz.zhhg.zblog.lang.exception.UpdateException;
+import xyz.zhhg.zblog.lang.exception.userexception.loginexception.LoginException;
 import xyz.zhhg.zblog.utils.graph.GraphUtils;
+import xyz.zhhg.zblog.utils.paging.Paging;
 import xyz.zhhg.zblog.web.conf.Views;
 import xyz.zhhg.zblog.web.controller.BaseController;
+import xyz.zhhg.zblog.web.pojo.Menu;
 import xyz.zhhg.zblog.web.pojo.User;
+import xyz.zhhg.zblog.web.pojo.form.ArticleSearchForm;
+import xyz.zhhg.zblog.web.service.ArticleService;
+import xyz.zhhg.zblog.web.service.MenuService;
 import xyz.zhhg.zblog.web.service.UserService;
 @Controller
 public class UserController extends BaseController{
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	ArticleService articleService;
+	
+	@Autowired
+	MenuService menuService;
 	
 	@RequestMapping(value="/login" , method=RequestMethod.GET)
 	public String login(){
@@ -45,16 +56,19 @@ public class UserController extends BaseController{
 			if(request!=null)session=request.getSession();
 			userService.login(name, pwd,session);
 			loginedView.setViewName(redirectView(Views.HOME));
-		} catch (Exception e) {
+			List<Menu> menus=menuService.getUserMenuList((User)session.getAttribute("user"));
+			session.setAttribute("menus", menus);
+		} catch (LoginException e) {
 			loginedView.addObject("msg",e.getMessage());
 			loginedView.setViewName(getView(Views.LOGIN));
+		} catch (SearchException e) {
 		}		
 		return loginedView;
 	}
 	@RequestMapping(value="/logout")
 	public ModelAndView logout(HttpServletRequest request){
 		try{
-			request.getSession().removeAttribute("user");
+			request.getSession().invalidate();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -91,9 +105,26 @@ public class UserController extends BaseController{
 			e.printStackTrace();
 		}
 	}
-	@RequestMapping(value={"/home","/user/home"} , method=RequestMethod.GET)
-	public String home(){
-		return "";
+	@RequestMapping(value={"/home","/user/home","*"} , method=RequestMethod.GET)
+	public ModelAndView home(HttpServletRequest request){
+		ModelAndView view=new ModelAndView("/index.jsp");
+		request.getSession().setAttribute("pigeonholeDates", articleService.getPigeonholeDate());
+		
+		Paging page=wrapPage(1);
+		User user=(User) request.getSession().getAttribute("user");
+		BigInteger uid=user==null?null:user.getId();
+		try {
+			ArticleSearchForm form=new ArticleSearchForm();
+			form.setCommentNumOrder(true);
+			form.setUserId(uid);
+			articleService.search(form, page);
+			
+			view.addObject("page", page);
+		} catch (SearchException e) {
+			//TODO 日志 
+			e.printStackTrace();
+		}
+		return view;
 	}
 	
 	@RequestMapping("/getVerity")
@@ -108,5 +139,50 @@ public class UserController extends BaseController{
 		ImageIO.write(GraphUtils.getExpressionGraph(1, 2, '+'), "a", response.getOutputStream());
 
 		
+	}
+	
+	@RequestMapping(value="/userCenter",method=RequestMethod.GET)
+	public ModelAndView userinfo(HttpServletRequest request){
+		ModelAndView view=new ModelAndView(getView(Views.Error_MESSAGE));
+		User user=(User) request.getSession().getAttribute("user");
+		if(user==null){
+			view.addObject("msg", "请先登陆");
+			view.addObject("jumpadd", Views.LOGIN);
+			return view;
+		}
+		
+		view.setViewName(getView(Views.ACCOUNT_PROFILE));
+		return view;
+	}
+	
+	@RequestMapping(value="/update")
+	public ModelAndView updateUser(User user,String newPwd,HttpServletRequest request){
+		ModelAndView view=new ModelAndView(getView(Views.Error_MESSAGE));
+		HttpSession session=request.getSession();
+		User old=(User) session.getAttribute("user");
+		if(old==null){
+			view.addObject("msg","请先登陆");
+			view.addObject("jumpadd",Views.LOGIN);
+			return view;
+		}
+		user.setId(old.getId());
+		user.setName(old.getName());
+		try {
+			userService.update(user, newPwd);
+			if(newPwd!=null){
+				view.addObject("msg","更新成功请重新登陆");
+				session.removeAttribute("user");
+				view.addObject("jumpadd","/login");
+			}else {
+				view.addObject("msg","更新成功");
+				session.setAttribute("user", userService.getUserInfoById(old.getId()));
+				view.addObject("jumpadd","/userCenter");
+			}
+		} catch (UpdateException e) {
+			view.addObject("msg",e.getMessage());
+			view.addObject("jumpadd","/userCenter");
+		}
+		
+		return view;
 	}
 }

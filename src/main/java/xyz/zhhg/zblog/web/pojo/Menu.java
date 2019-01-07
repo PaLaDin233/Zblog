@@ -1,6 +1,7 @@
 package xyz.zhhg.zblog.web.pojo;
 
 import java.math.BigInteger;
+import java.util.List;
 
 public class Menu {
 	private BigInteger id;
@@ -8,7 +9,8 @@ public class Menu {
 	private String name;
 	private String url;
 	private int status;
-	private int usetype;
+	private int usertype;
+	private List<Menu> childList;
 	
 	
 	public Menu() {
@@ -23,7 +25,7 @@ public class Menu {
 		this.name = name;
 		this.url = url;
 		this.status = status;
-		this.usetype = usetype;
+		this.usertype = usetype;
 	}
 	
 	public BigInteger getId() {
@@ -57,17 +59,39 @@ public class Menu {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-	public int getUsetype() {
-		return usetype;
+	public int getUsertype() {
+		return usertype;
 	}
-	public void setUsetype(int usetype) {
-		this.usetype = usetype;
+	public void setUsertype(int usetype) {
+		this.usertype = usetype;
 	}
+	/*@Override
+	public String toString() {
+		StringBuilder builder=new StringBuilder();
+		builder.append("Menu [id=" + id + ", superiorId=" + superiorId + ", name="
+				+ name + ", url=" + url + ", status=" + status + ", usetype="
+				+ usertype + "]");
+		for (Menu menu : childList) {
+			builder.append(menu+"\n");
+		}
+				
+				
+		return builder.toString();
+	}*/
+
+	public List<Menu> getChildList() {
+		return childList;
+	}
+
 	@Override
 	public String toString() {
 		return "Menu [id=" + id + ", superiorId=" + superiorId + ", name="
-				+ name + ", url=" + url + ", status=" + status + ", usetype="
-				+ usetype + "]";
+				+ name + ", url=" + url + ", status=" + status + ", usertype="
+				+ usertype + ", childList=" + childList + "]";
+	}
+
+	public void setChildList(List<Menu> childList) {
+		this.childList = childList;
 	}
 	
 	

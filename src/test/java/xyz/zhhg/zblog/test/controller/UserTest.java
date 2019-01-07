@@ -1,4 +1,4 @@
-package xyz.zhhg.zblog.test;
+package xyz.zhhg.zblog.test.controller;
 
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;

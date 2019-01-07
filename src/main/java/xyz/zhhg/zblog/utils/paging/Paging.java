@@ -80,6 +80,9 @@ public class Paging implements Serializable {
         if (maxResults == 0) {
             return 1;
         }
+        if(totalCount==0){
+        	return getPageNo()+1;
+        }
         return (int) Math.ceil(totalCount * 1.0 / maxResults);
     }
 
@@ -97,7 +100,7 @@ public class Paging implements Serializable {
      * @return 当前页的上一页的页码，如果当前页为第一页时返回1
      */
     public int getPrev(){
-        return (pageNo > 1 ? (pageNo - 1) : 0);
+        return (pageNo > 1 ? (pageNo - 1) : 1);
     }
     
     /**

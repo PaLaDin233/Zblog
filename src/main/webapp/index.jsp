@@ -1,45 +1,28 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@page import="java.util.List"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <html>
 <!-- head部分 -->
+<head>
 <jsp:include page="/jsp/baseFrame/head.jsp"></jsp:include>
+<style type="text/css">
+#Idcheckbox >*{
+	display: none;
+}
+</style>
+</head>
 <body>
 	<jsp:include page="/jsp/baseFrame/MenuBar.jsp"></jsp:include>
 	<div class="container">
 
-		<div class="row clear-fix">
-			<div class="col-xs-9 col-sm-8 col-md-9 col-lg-9 blog-main"></div>
+		<div class="row">
+			<div class="col-xs-9 col-sm-8 col-md-9 col-lg-9 blog-main">
+				<jsp:include page="/jsp/article/articlelist.jsp"></jsp:include>
+			</div>
 
 			<div class="col-xs-3 col-sm-4 col-md-3 col-lg-3 blog-sidebar">
-				<div class="sidebar-module sidebar-module-inset hidden-xs">
-					<h4>关于</h4>
-					<p>欢迎来到Zblog!</p>
-				</div>
-				<div class="sidebar-module">
-					<h4>归档</h4>
-					<ol class="list-unstyled">
-						<li><a href="#">March 2014</a></li>
-						<li><a href="#">February 2014</a></li>
-						<li><a href="#">January 2014</a></li>
-						<li><a href="#">December 2013</a></li>
-						<li><a href="#">November 2013</a></li>
-						<li><a href="#">October 2013</a></li>
-						<li><a href="#">September 2013</a></li>
-						<li><a href="#">August 2013</a></li>
-						<li><a href="#">July 2013</a></li>
-						<li><a href="#">June 2013</a></li>
-						<li><a href="#">May 2013</a></li>
-						<li><a href="#">April 2013</a></li>
-					</ol>
-				</div>
-				<div class="sidebar-module">
-					<h4>Elsewhere</h4>
-					<ol class="list-unstyled">
-						<li><a href="#">GitHub</a></li>
-						<li><a href="#">QQ</a></li>
-						<li><a href="#">sina</a></li>
-					</ol>
-				</div>
+				<jsp:include page="/jsp/baseFrame/SideBar.jsp"></jsp:include>
+			</div>
 			</div>
 			<!-- /.blog-sidebar -->
 
@@ -50,4 +33,19 @@
 	<!-- /.container -->
 	<jsp:include page="jsp/baseFrame/footer.jsp"></jsp:include>
 </body>
+<script type="text/javascript">
+	 //设置第一篇文章展开
+	$("#collapseOne1").attr("class","panel-collapse collapse in");
+	function pageChange(a){
+		var newUrl = '/Zblog/findArticles/page'+a;    //设置新提交地址
+        $("#articleSearchFrom").attr('action',newUrl);    //通过jquery为action属性赋值
+        $("#articleSearchFrom").submit();    //提交ID为myform的表单
+	};
+	/*
+	$('#datetimepicker').datetimepicker({
+		format : 'yyyy-MM-dd',
+		autoclose : true,
+		language : 'zh-CN',
+	}); */
+</script>
 </html>

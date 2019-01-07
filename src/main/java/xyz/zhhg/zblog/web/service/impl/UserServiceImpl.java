@@ -1,5 +1,6 @@
 package xyz.zhhg.zblog.web.service.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import xyz.zhhg.zblog.lang.exception.userexception.loginexception.LoginException
 import xyz.zhhg.zblog.lang.exception.userexception.loginexception.UserNoExistException;
 import xyz.zhhg.zblog.lang.exception.userexception.registexception.UserExistException;
 import xyz.zhhg.zblog.utils.md5.MD5Util;
+import xyz.zhhg.zblog.web.dao.MenuDao;
 import xyz.zhhg.zblog.web.dao.PermissionDao;
 import xyz.zhhg.zblog.web.dao.UserDao;
 import xyz.zhhg.zblog.web.pojo.User;
@@ -45,7 +47,7 @@ public class UserServiceImpl implements UserService {
 	public void insert(User user) throws InsertException {
 		//判断用户是否重复
 		if(user==null){
-			throw new InsertException("表达提交错误");
+			throw new InsertException("表单提交错误");
 		}
 		if(StringUtils.isEmpty(user.getName())){
 			throw new InsertException("用户名为空！");
@@ -57,6 +59,7 @@ public class UserServiceImpl implements UserService {
 		if(searchByName(user.getName())!=null){
 			throw new UserExistException("用户已存在");
 		}
+		user.setPwd(MD5Util.md5(user.getPwd()));
 		userDao.insertUser(user);
 	}
 	
@@ -70,11 +73,34 @@ public class UserServiceImpl implements UserService {
 	
 
 	@Override
-	public void update(User t) throws UpdateException {
-		// TODO Auto-generated method stub
+	public void update(User user,String newPwd) throws UpdateException {
+		if(StringUtils.isEmpty(user.getPwd())){
+			update(user);
+			user.setPwd(null);
+			return;
+		}
 		
+		
+		//判断密码是否正确
+		User old=userDao.findUserByNameAndPwd(user.getName(), MD5Util.md5(user.getPwd()));
+		System.out.println(MD5Util.md5(user.getPwd()));
+		if(old==null){
+			throw new UpdateException("原密码不正确");
+		}
+		user.setPwd(MD5Util.md5(newPwd));
+		update(user);
 	}
 	
+	@Override
+	public void update(User user) throws UpdateException {
+		
+		try {
+			userDao.updateUser(user);
+		} catch (Exception e) {
+			throw new UpdateException(e);
+		}
+	}
+
 	
 	@Override
 	public List<User> search(Map<String,Object> p) {
@@ -119,15 +145,15 @@ public class UserServiceImpl implements UserService {
 	public void login(User userCheck, HttpSession session) throws LoginException{
 		User user=null;
 		try {
-			user=userDao.findUserByNameAndPwd(userCheck.getName(), userCheck.getPwd());
-			if(session!=null){
-				session.setAttribute("user", user);
-			}
+			user=userDao.findUserByNameAndPwd(userCheck.getName(), MD5Util.md5(userCheck.getPwd()));
 		} catch (Exception e) {
 			throw new LoginException(e);
 		}
 		
 		if(user==null)throw new LoginException("用户名或密码错误");
+		if(session!=null){
+			session.setAttribute("user", user);
+		}
 		if(user.getStatus()==1)throw new LoginException("用户被锁定了");
 		
 	}
@@ -158,10 +184,18 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void login(String username, String password, HttpSession session)
-			throws Exception {
+			throws LoginException {
 		login(new User(username, password), session);
 		
 	}
+
+
+	@Override
+	public User getUserInfoById(BigInteger id) {
+		
+		return userDao.getUserInfoById(id);
+	}
+
 
 
 
