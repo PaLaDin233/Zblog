@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!-- 引入 Bootstrap -->
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link
+	href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
+	rel="stylesheet">
+<!-- 可选的Bootstrap主题文件（一般不使用） -->
+<script
+	src="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"></script>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<!-- HTML5 Shiv 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
+<!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
+<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+	<![endif]-->
+<script src='../epiceditor/js/epiceditor.min.js'></script>
+<script src='../js/request.js'></script>
+<script type="text/javascript">
+	function submit() {
+		//获取编辑器内容
+		var details = editor.getElement('editor').body.innerHTML;
+		//提交到服务器
+		//ajax提交
+		//$.post("../hi.do",{"str":details});
+		
+		//普通提交
+		post("../hi.do",{"str":details});
+		
+	}
+</script>
+
+</head>
+<body>
+	<div id="epiceditor" style='width: 400px; height: 200px;'></div>
+	<button type="button" onclick="submit()">提交</button>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+<script>
+	var opts = {
+		container : 'epiceditor',
+		textarea : null,
+		basePath : '../epiceditor',
+		clientSideStorage : true,
+		localStorageName : 'epiceditor',
+		useNativeFullscreen : true,
+		parser : marked,
+		file : {
+			name : 'epiceditor',
+			defaultContent : '',
+			autoSave : 100
+		},
+		theme : {
+			base : '/themes/base/epiceditor.css',
+			preview : '/themes/preview/preview-dark.css',
+			editor : '/themes/editor/epic-dark.css'
+		},
+		button : {
+			preview : true,
+			fullscreen : true,
+			bar : "auto"
+		},
+		focusOnLoad : false,
+		shortcut : {
+			modifier : 18,
+			fullscreen : 70,
+			preview : 80
+		},
+		string : {
+			togglePreview : '预览模式',
+			toggleEdit : '编辑模式',
+			toggleFullscreen : '进入全屏'
+		},
+		autogrow : false
+	}
+	var editor = new EpicEditor(opts);
+
+	editor.load();
+</script>
+</html>

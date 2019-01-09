@@ -4,26 +4,55 @@
 <!-- public User findUserByNameAndPwd(String name,String pwd); public User 
 	findUserByName(String name); public boolean insertUser(User user); public 
 	boolean updateUser(User user); -->
-<mapper namespace="xyz.zhhg.zblog.dao.MenuDao">
-	<resultMap type="xyz.zhhg.zblog.pojo.Menu" id="MenuList">
-		<id property="id" column="menu_id"/>
-		<result property="superiorId" column="menu_superior"/>
-		<result property="name" column="menu_name"/>
-		<result property="url" column="menu_url"/>
-		<result property="status" column="menu_status"/>
-		<result property="usetype" column="menu_usetype"/>
+<mapper namespace="xyz.zhhg.zblog.web.dao.MenuDao">
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Menu" id="MenuList">
+		<id property="id" column="id"/>
+		<result property="superiorId" column="superiorId"/>
+		<result property="name" column="name"/>
+		<result property="url" column="url"/>
+		<result property="status" column="status"/>
+		<result property="usertype" column="usertype"/>
+		
 	</resultMap>
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Menu" id="ChildList" extends="MenuList">
+		<collection property="childList" select="getMenuList" 
+		ofType="ChildList" column="{superiorId=id,usertype=usertype}">
+		</collection>
+	</resultMap>
+	<insert id="insertMenu" parameterType="xyz.zhhg.zblog.web.pojo.Menu">
+		insert into menu(menu_superior,menu_url,menu_usertype,menu_name)
+		value(
+			#{superiorId},
+			#{url},
+			#{usertype},
+			#{name}
+		)
+	</insert>
 	
-	<select id="getMenuBySuperiorId" parameterType="java.math.BigInteger" resultMap="MenuList">
-		select * from menu 
+	<sql id="menuInfo">
+		menu_id as id,menu_superior as superiorId,menu_url as url,menu_usertype as usertype,menu_name as name
+	</sql>
+	
+	<!-- 获取菜单列表 -->
+	<!-- 查询所有顶级菜单以及菜单项的子菜单列表 -->
+	<select id="getMenuList" parameterType="hashmap" resultMap="ChildList">
+		select <include refid="menuInfo"></include>
+		from menu 
 		<where>
-			menu_superior
-			<if test="#{superiorId}==null">
-				is null;
+			menu_status=0
+			<if test="userType!=null and userType!=1">
+				and menu_usertype=#{usertype}
 			</if>
-			<if test="#{superiorId}!=null">
-				=#{superiorId};
-			</if>
+			and menu_superior=
+			<choose>
+				<when test="superiorId!=null">
+					#{superiorId}
+				</when>
+				<otherwise>
+					0
+				</otherwise>
+			</choose>
 		</where>
+	
 	</select>
 </mapper>

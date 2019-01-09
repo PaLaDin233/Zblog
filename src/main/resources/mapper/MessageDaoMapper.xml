@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="xyz.zhhg.zblog.web.dao.MessageDao">
+<resultMap type="xyz.zhhg.zblog.web.pojo.Message" id="messageResultMap">
+	<id property="id" column="id"/>
+	<result property="uid" column="uid"/>
+	<result property="uname" column="uname"/>
+	<result property="detail" column="detail"/>
+	<result property="" column=""/>
+	<result property="" column=""/>
+	<result property="" column=""/>
+</resultMap>
+	<insert id="leaveMessage" parameterType="xyz.zhhg.zblog.web.pojo.Message">
+		insert into message(message_user_id,message_user_user_id,message_detail)
+			VALUES(
+			#{uid},#{mid},#{detail}
+			)
+	</insert>
+	<delete id="deleteMessageFromIdList">
+	delete from message where
+		1!=1
+		<trim prefix="Or" >
+			message_id in(
+			<foreach collection="idList" item="id" open="(" close=")"
+					separator=",">
+					#{id}
+			</foreach>
+			)
+		</trim>
+		;	
+	</delete>
+	
+	<sql id="MessageInfo">
+		m.message_id AS id,
+		m.message_user_id AS uid,
+		u.user_name as uname,
+		m.message_detail as detail
+	</sql>
+	
+	<select id="getLMessagesfromMasterId" resultMap="messageResultMap">
+		SELECT
+			<include refid="MessageInfo"></include>
+		FROM
+			message AS m,
+			USER AS u
+		WHERE
+			m.message_user_user_id = #{id}
+			AND m.message_user_id = u.user_id
+	</select>
+	
+	<select id="getMessageList" resultMap="messageResultMap" parameterType="java.util.Map">
+		SELECT
+			<include refid="MessageInfo"></include>
+		FROM
+			message AS m,
+			USER AS u
+		WHERE
+			m.message_user_user_id = #{mid}
+			AND m.message_user_id = u.user_id
+		LIMIT #{firstIndex},#{pageSize}
+		;
+	</select>
+</mapper>

@@ -1,0 +1,90 @@
+body {
+	background-image: url("/Zblog/assets/img/background1.jpg"); 
+	background-attachment: fixed;
+	background-position: center 0;
+	background-repeat: no-repeat;
+	background-size: cover;
+	-webkit-background-size: cover; /* 兼容Webkit内核浏览器如Chrome和Safari */
+	-o-background-size: cover; /* 兼容Opera */
+	height: 100%;
+}
+
+.blog-title, .blog-description {
+	text-align: right;
+}
+
+#blog-head-icon {
+	background-image: url("/Zblog/assets/img/icon.png");
+	background-repeat: no-repeat;
+	background-position-x: 10px;
+	background-position-y: 10px;
+	height: 84px;
+	width: 64px;
+	display: none;
+}
+
+.blog-description {
+	font-size: 5px;
+}
+.top-menu{
+	padding: 0;
+	margin: 0;
+}
+.top-menu .col-md-12{
+	padding: 0;
+	margin: 0;
+}
+.navbar-right{
+	margin: 0;
+}
+/* .navbar{
+	filter:alpha(opacity:60); opacity:0.6;  
+	-moz-opacity:0.6;-khtml-opacity: 0.6;
+}
+.navbar:HOVER{
+	filter:alpha(opacity:100); opacity:1;  
+	-moz-opacity:1;-khtml-opacity: 1;
+} */
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover
+	{
+	background-color: gray;
+	border-bottom-color: transparent;
+}
+
+#footer {
+	/* background-color: #ffaf80; */
+	background-color: black;
+	color:white;
+	filter: alpha(opacity : 70);
+	opacity: 0.7;
+	-moz-opacity: 0.7;
+	-khtml-opacity: 0.7;
+	text-align: center;
+	/* border: thin;
+	border-style: solid;
+	border-top-width: 10px; */
+	
+	position:fixed;
+	bottom:0;
+	
+	width: 100%;
+}
+a{
+	position:relative;
+	z-index: 1;
+}
+
+.copy, .copy a {
+	color: #c9d4f6;
+	text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.historyback{
+	color: #66ccff;
+	cursor: pointer;
+}
+.historyback:link    {color: #66ccff;}
+.historyback:visited {color: #66ccff;}
+.historyback:hover   {color:blue;}
+.historyback:active  {color:#66ccff;}

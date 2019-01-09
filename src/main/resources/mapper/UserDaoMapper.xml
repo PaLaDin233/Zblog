@@ -5,8 +5,8 @@
 <!-- public User findUserByNameAndPwd(String name,String pwd); public User 
 	findUserByName(String name); public boolean insertUser(User user); public 
 	boolean updateUser(User user); -->
-<mapper namespace="xyz.zhhg.zblog.dao.UserDao">
-	<resultMap type="xyz.zhhg.zblog.pojo.User" id="userResultMap">
+<mapper namespace="xyz.zhhg.zblog.web.dao.UserDao">
+	<resultMap type="xyz.zhhg.zblog.web.pojo.User" id="userResultMap">
 		<id property="id" column="user_id" />
 		<result property="name" column="user_name" />
 		<!-- <result property="pwd" column="user_password" /> -->
@@ -15,19 +15,20 @@
 		<result property="status" column="user_status" />
 		<result property="email" column="user_email" />
 		<result property="phone" column="user_phone" />
+		<result property="headIcon" column="user_headicon"/>
 	</resultMap>
 	
 	<select id="findUserByNameAndPwd" resultMap="userResultMap">
 		select * from user
-		where user_name = #{0} and user_password=#{1}
+		where user_name = #{0} and user_password=#{1};
 	</select>
 	
 	<select id="findUserByName" parameterType="string" resultMap="userResultMap">
 		select * from user
-		where user_name = #{name}
+		where user_name = #{name};
 	</select>
 	
-	<insert id="insertUser" parameterType="xyz.zhhg.zblog.pojo.User">
+	<insert id="insertUser" parameterType="xyz.zhhg.zblog.web.pojo.User">
 		insert into user (user_name,user_type,user_password,user_ip,user_email,user_phone)
 			value (
 				#{name},
@@ -39,15 +40,12 @@
 			);
 	</insert>
 	
-	<update id="updateUser" parameterType="xyz.zhhg.zblog.pojo.User">
+	<update id="updateUser" parameterType="xyz.zhhg.zblog.web.pojo.User">
 		update user
 		<set>
-			<if test="id !=0">
-				user_id=#{id},
-			</if>
-			<if test="name !=null">
+			<!-- <if test="name !=null">
 				user_name=#{name},
-			</if>
+			</if> -->
 			<if test="pwd !=null">
 				user_password=#{pwd},
 			</if>
@@ -67,6 +65,17 @@
 				user_phone=#{phone},
 			</if>
 		</set>
-		where user_id=#{id}
+		where user_id=#{id};
 	</update>
+	
+	<sql id="userInfo">
+		user_id,user_name,user_ip,user_email,user_phone ,user_type 
+	</sql>
+	<select id="getUserInfoById" parameterType="java.math.BigInteger" resultMap="userResultMap">
+		select <include refid="userInfo"></include> 
+		from user where user_id=#{id};
+	</select>
+	
+	
+	
 </mapper>
