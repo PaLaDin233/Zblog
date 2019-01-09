@@ -22,10 +22,12 @@ import xyz.zhhg.zblog.lang.exception.SearchException;
 import xyz.zhhg.zblog.utils.paging.Paging;
 import xyz.zhhg.zblog.web.conf.Views;
 import xyz.zhhg.zblog.web.pojo.Article;
+import xyz.zhhg.zblog.web.pojo.Classcify;
 import xyz.zhhg.zblog.web.pojo.User;
 import xyz.zhhg.zblog.web.pojo.form.ArticleSearchForm;
 import xyz.zhhg.zblog.web.pojo.form.DeleteArticleForm;
 import xyz.zhhg.zblog.web.service.ArticleService;
+import xyz.zhhg.zblog.web.service.ClasscifyService;
 
 @Controller
 public class ArticleController extends BaseController{
@@ -33,12 +35,23 @@ public class ArticleController extends BaseController{
 	@Autowired
 	ArticleService articleService;
 
-
+	@Autowired
+	ClasscifyService classcifyService;
 
 
 	@RequestMapping(value="/saveArticle",method=RequestMethod.GET)
-	public String saveArticle(){
-		return getView(Views.ARTICLE_EDIT);
+	public ModelAndView saveArticle(HttpServletRequest request){
+		ModelAndView view=new ModelAndView(getView(Views.ARTICLE_EDIT));
+		User user=(User) request.getSession().getAttribute("user");
+		
+		if(user==null){
+			view.addObject("msg", "请登陆!");
+			view.addObject("jumpadd", Views.LOGIN);
+		}else{
+			List<Classcify> classcifies=classcifyService.getClasscify(user);
+			view.addObject("classcifies",classcifies);
+		}
+		return view;
 	}
 	/**
 	 * 

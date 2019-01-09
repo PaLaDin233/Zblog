@@ -1,0 +1,69 @@
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- public User findUserByNameAndPwd(String name,String pwd); public User 
+	findUserByName(String name); public boolean insertUser(User user); public 
+	boolean updateUser(User user); -->
+<mapper namespace="xyz.zhhg.zblog.web.dao.ClasscifyDao">
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Classcify" id="TopList">
+		<id column="id" property="id"/>
+		<result column="superior" property="superior"/>
+		<result column="name" property="name" />		
+	</resultMap>
+	
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Classcify" id="ChildList"
+		extends="TopList">
+		<collection property="childClasscify" select="getClasscify"
+			ofType="childClasscify" column="{superior=id}">
+		</collection>
+	</resultMap>
+
+	<sql id="classcifyInfo">
+		type_id as id,type_superior as superior,type_name as name
+	</sql>
+
+	<insert id="insertClasscify" parameterType="xyz.zhhg.zblog.web.pojo.Classcify">
+		insert into
+		classcify(
+		type_superior,type_name
+		)
+		value(
+		#{superior},#{name}
+		)
+	</insert>
+
+	<!-- 删除 -->
+	<update id="updateClasscify" parameterType="xyz.zhhg.zblog.web.pojo.Classcify">
+		update classcify
+		<set>
+			<if test="superior!=null and id!=0">
+				type_superior=#{superior},			
+			</if>
+			<if test="name!=null">
+				type_name=#{name},			
+			</if>
+			type_status=#{status}
+		</set> 
+		where type_id=#{id};
+	</update>
+	
+	
+	<select id="getClasscify" resultMap="ChildList">
+		select
+		<include refid="classcifyInfo"></include>
+		from classcify
+		<where>
+			type_status=0 
+			<choose>
+				<when test="superior==null">
+					and type_superior = 0
+				</when>
+				<otherwise>
+					and type_superior = #{superior}
+				</otherwise>
+			</choose>
+		</where>
+		
+	</select>
+	
+</mapper>

@@ -115,14 +115,14 @@ SyntaxHighlighter.all();
 			style="width: 20px; float: right; position: fixed; top: 200px; color: white;">编辑文章
 		</a>
 	</c:if>
-
+	
 	<div class="container">
 		<div class="row">
 			<div class="col-xs-1"></div>
 			<div class="col-xs-10" id="main">
 				<div id="head" class="row">
 					<div id="article-title">${article.title }</div>
-					<div id="article-info">
+					<div id="article-info">作者:${article.userName}
 						<span id="article_createdate" align="right"></span> <span
 							id="views-num">阅读数:${article.views }</span>
 					</div>

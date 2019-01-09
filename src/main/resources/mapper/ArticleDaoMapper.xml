@@ -8,6 +8,7 @@
 	<resultMap type="xyz.zhhg.zblog.web.pojo.Article" id="articleResultMap">
 		<id property="id" column="blog_article_id" />
 		<result property="userId" column="user_id" />
+		<result property="userName" column="user_name"/>
 		<result property="title" column="blog_article_title" />
 		<result property="createTime" javaType="java.util.Date"
 			jdbcType="TIMESTAMP" column="blog_article_createtime" />
@@ -19,8 +20,20 @@
 		<result property="views" column="blog_article_views" />
 		<result property="commentNum" column="blog_article_commentnum" />
 		<result property="img" column="blog_article_img" />
-
+		<collection property="classcifys" ofType="xyz.zhhg.zblog.web.pojo.Classcify"
+			select="getArticleClasscify" column="aid=blog_article_id">
+			<id column="id" property="id" />
+			<result column="superior" property="superior" />
+			<result column="name" property="name" />
+		</collection>
 	</resultMap>
+
+	<resultMap type="xyz.zhhg.zblog.web.pojo.Classcify" id="classcify">
+		<id column="id" property="id" />
+		<result column="superior" property="superior" />
+		<result column="name" property="name" />
+	</resultMap>
+
 	<insert id="insertArticle" parameterType="xyz.zhhg.zblog.web.pojo.Article">
 		insert into
 		article(
@@ -37,6 +50,19 @@
 		,#{details}
 		,#{modifiedDate}
 		);
+
+	</insert>
+	<!-- 为文章添加分类 -->
+	<insert id="insertArticleClasscify" parameterType="xyz.zhhg.zblog.web.pojo.Article">
+		insert into article_classcify(
+		blog_article_id,type_id
+		)
+		values
+		<foreach collection="classcifys" item="classcify" separator=",">
+			(
+			#{id},#{classcify.id}
+			)
+		</foreach>
 
 	</insert>
 
@@ -60,7 +86,7 @@
 			<otherwise>
 				and 1!=1
 			</otherwise>
-			
+
 		</choose>
 		;
 	</update>
@@ -109,13 +135,14 @@
 		GROUP BY ${articleId}
 		)as extratable
 		on
-		article.blog_article_id=extratable.${articleId}
+		blog_article_id=extratable.${articleId}
 	</sql>
 
 	<!-- 文章概况 -->
 	<sql id="articleOutline">
-		blog_article_id,
-		user_id,
+		a.blog_article_id as blog_article_id,
+		a.user_id as user_id,
+		u.user_name as user_name,
 		blog_article_title,
 		blog_article_createtime,
 		blog_article_views,
@@ -130,7 +157,11 @@
 		select
 		<include refid="articleOutline"></include>
 		from
-		article LEFT JOIN
+		user as u,article as a
+		<if test="classcifyId!=null">
+			,article_classcify as ac
+		</if>
+		LEFT JOIN
 		<include refid="selectComNum">
 			<property name="articleId" value="article_id" />
 			<property name="num" value="blog_article_commentnum" />
@@ -138,11 +169,12 @@
 		</include>
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			blog_article_status=#{status}
+			and a.user_id=u.user_id
 			<if test="id!=null">
-				AND blog_article_id=#{id}
+				AND a.blog_article_id=#{id}
 			</if>
 			<if test="userId!=null and userId!=0">
-				AND user_id=#{userId}
+				AND a.user_id=#{userId}
 			</if>
 			<if test="beginTime==null or endTime==null">
 				<if test="createTime!=null">
@@ -156,6 +188,10 @@
 			</if>
 			<if test="title!=null">
 				AND blog_article_title like #{title}
+			</if>
+			<if test="classcifyId!=null">
+				and a.blog_article_id=ac.blog_article_id
+				and ac.type_id=#{classcifyId}
 			</if>
 		</trim>
 
@@ -171,6 +207,14 @@
 		</trim>
 		limit #{firstIndex},#{pageSize};
 	</select>
+
+	<!-- 根据分类查找文章 -->
+	<!-- <select id="getArticlesByClasscify" resultMap="articleResultMap"> select 
+		<include refid="articleOutline"></include> from article as a,article_classcify 
+		as ac,classcify as c LEFT JOIN <include refid="selectComNum"> <property name="articleId" 
+		value="article_id" /> <property name="num" value="blog_article_commentnum" 
+		/> <property name="table" value="article_comment" /> </include> <where> a.blog_article_id=ac.blog_article_id 
+		and ac.classify_id=c.type_id and ac.type_id=#{id} </where> </select> -->
 
 	<!-- 获取满足指定条件的文章个数 -->
 	<select id="selectCountArticle" parameterType="java.util.Map"
@@ -204,14 +248,40 @@
 		;
 	</select>
 
-
+	<sql id="articleDetails">
+		a.blog_article_id as blog_article_id,
+		u.user_id as user_id,
+		u.user_name as user_name,
+		a.blog_article_title as blog_article_title,
+		a.blog_article_createtime as blog_article_createtime,
+		a.blog_article_views as blog_article_views,
+		a.blog_article_details as blog_article_details
+	</sql>
 	<!-- 获取文章详情 -->
 	<select id="getArticleDetailsByArticleId" resultMap="articleResultMap"
 		parameterType="java.math.BigInteger">
-		select * from article
+		select <include refid="articleDetails"></include> 
+		from article as a,user as u
 		where
-		blog_article_status = 0 and
-		blog_article_id=#{id};
+		a.blog_article_status = 0 and
+		a.blog_article_id=#{id} and 
+		a.user_id=u.user_id;
+	</select>
+
+	<sql id="articleClasscifyInfo">
+		c.type_id as id,
+		c.type_name as name,
+		c.type_superior as
+		superior
+
+	</sql>
+	<!-- 获取指定文章分类 -->
+	<select id="getArticleClasscify" resultMap="classcify">
+		select
+		<include refid="articleClasscifyInfo"></include>
+		from classcify as c,article_classcify as ac
+		where
+		ac.blog_article_id=#{aid} and ac.type_id=c.type_id
 	</select>
 
 	<select id="getPigeonholeDate" resultType="java.util.Date">
@@ -219,6 +289,7 @@
 		DATE_FORMAT(blog_article_createtime,#{format}) as PigeonholeDate
 		FROM
 		article
+		where blog_article_status = 0
 		GROUP BY PigeonholeDate
 		desc;
 	</select>

@@ -16,6 +16,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import xyz.zhhg.zblog.utils.bean.BeanUtils;
 import xyz.zhhg.zblog.web.dao.ArticleDao;
 import xyz.zhhg.zblog.web.pojo.Article;
+import xyz.zhhg.zblog.web.pojo.Classcify;
 import xyz.zhhg.zblog.web.pojo.form.ArticleSearchForm;
 import xyz.zhhg.zblog.web.service.ArticleService;
 
@@ -54,16 +55,16 @@ public class ArticleDaoTester {
 		javaBean.setViewsNumOrder(true);
 		//javaBean.setLikesNumOrder(false);
 		//javaBean.setUserId(new BigInteger("3"));
-		javaBean.setTitle("%标题%");
+		//javaBean.setTitle("%标题%");
 		//Calendar calendar=Calendar.getInstance();
 		//calendar.set(2018, 0, 27);
 		//Date selectDate=calendar.getTime();
 		
 		//javaBean.setCreateTime(selectDate);
+		javaBean.setClasscifyId(new BigInteger("2"));
 		Map<String,Object> map=BeanUtils.java2Map(javaBean);
-		map.put("firstIndex", 1);
+		map.put("firstIndex", 0);
 		map.put("pageSize", 100);
-		
 		
 		//System.out.println(map);
 		List<Article> list=articleDao.findArticle(map);
@@ -98,6 +99,27 @@ public class ArticleDaoTester {
 		article=articleDao.getArticleDetailsByArticleId(new BigInteger("18"));
 		System.out.println(article);
 		
+	}
+	
+	@Test
+	public void insertAC(){
+		Article article=new Article();
+		article.setId(new BigInteger("1"));
+		List<Classcify> classcifys=new ArrayList<Classcify>();
+		classcifys.add(new Classcify(new BigInteger("2")));
+		classcifys.add(new Classcify(new BigInteger("3")));
+		article.setClasscify(classcifys);
+		articleDao.insertArticleClasscify(article);
+	}
+	
+	@Test
+	public void getA(){
+		Article a=articleDao.getArticleDetailsByArticleId(new BigInteger("19"));
+		
+		System.out.println(a);
+		
+		System.out.println(a.getClasscify());
+		System.out.println(a.getUserName());
 	}
 	
 }

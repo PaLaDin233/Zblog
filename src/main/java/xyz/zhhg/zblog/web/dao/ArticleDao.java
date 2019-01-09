@@ -17,11 +17,34 @@ public interface ArticleDao {
 	 */
 	public boolean insertArticle(Article article);
 	
+	/**
+	 * 添加文章分类
+	 * @param articleId 文章id
+	 * @param classcifyId 分类id
+	 * @return
+	 */
+	public int insertArticleClasscify(Article article);
+	
+	/**
+	 * 根据id列表批量删除文章
+	 * @param idList
+	 * @param uid
+	 * @return
+	 */
 	public int deleteArticleByIdList(@Param("idList")List<BigInteger> idList,@Param("uid")BigInteger uid);
 	
+	/**
+	 * 更新文章
+	 * @param article
+	 * @return
+	 */
 	public int updateArticle(Article article);
 	
-	
+	/**
+	 * 文章浏览数自增
+	 * @param aid
+	 * @return
+	 */
 	public int incViewNum(@Param("aid")BigInteger aid);
 
 	/**
@@ -36,6 +59,7 @@ public interface ArticleDao {
 	 */
 	public List<Article> findArticle(Map<String, Object> map);
 	
+	
 	/**
 	 * 获取满足条件的所有文章数
 	 * @param map
@@ -43,7 +67,11 @@ public interface ArticleDao {
 	 */
 	public int selectCountArticle(Map<String, Object> map);
 	
-	
+	/**
+	 * 获取文章详情
+	 * @param id 文章的id
+	 * @return 文章
+	 */
 	public Article getArticleDetailsByArticleId(BigInteger id);
 	
 	/**

@@ -37,6 +37,18 @@
 					<div id="artile-datails">
 						<textarea id="view_content" name="details" rows="5" data-required
 							data-describedby="message" data-description="content">${article.details }</textarea>
+							
+						<%-- <label for="title" class="control-label" for="classcify">分类:</label>
+						 <select name="classcifys" class="form-control">
+						 	<c:forEach items="${classcifies }" var="c">
+								<option value="${c.id }">${c.name }</option>
+								<c:if test="${c.childClasscify!=null &&c.childClasscify.size()>0 }">
+									<c:forEach items="${c.childClasscify }" var="child">
+										<option value="${child.id }">${child.name }</option>
+									</c:forEach>
+								</c:if>
+							</c:forEach>
+						 </select> --%>
 						<button class="btn btn-default" id="submit">提交</button>
 						     
 

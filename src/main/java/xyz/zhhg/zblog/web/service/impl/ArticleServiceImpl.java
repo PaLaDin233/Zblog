@@ -49,7 +49,7 @@ public class ArticleServiceImpl implements ArticleService{
 		}
 		else{//是更新文章
 			articleDao.updateArticle(article);
-			System.out.println("更新前："+article);
+			
 		}	
 	}
 	

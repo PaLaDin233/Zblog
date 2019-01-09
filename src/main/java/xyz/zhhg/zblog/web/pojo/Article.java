@@ -12,6 +12,7 @@ public class Article implements Serializable{
 	private static final long serialVersionUID = 6193926749324625368L;
 	private BigInteger id;
 	private BigInteger userId;
+	private String userName;
 	private String title;
 	private Date createTime;
 	private Date modifiedDate;
@@ -22,6 +23,7 @@ public class Article implements Serializable{
 	private int commentNum;
 	private String img;
 	public List<Comment> comments;//文章的评论
+	private List<Classcify> classcifys;
 	public List<Comment> getComments() {
 		return comments;
 	}
@@ -126,13 +128,27 @@ public class Article implements Serializable{
 		this.modifiedDate=new Date(System.currentTimeMillis());
 		
 	}
+	
+	public List<Classcify> getClasscify() {
+		return classcifys;
+	}
+	public void setClasscify(List<Classcify> classcifys) {
+		this.classcifys = classcifys;
+	}
 	@Override
 	public String toString() {
 		return "Article [id=" + id + ", userId=" + userId + ", title=" + title
 				+ ", createTime=" + createTime + ", modifiedDate="
 				+ modifiedDate + ", status=" + status + ", details=" + details
 				+ ", likes=" + likes + ", views=" + views + ", commentNum="
-				+ commentNum + ", img=" + img + ", comments=" + comments + "]";
+				+ commentNum + ", img=" + img + ", comments=" + comments
+				+ ", classcifys=" + classcifys + "]";
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 	
 	

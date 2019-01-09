@@ -31,6 +31,7 @@ public class ArticleSearchForm {
 	private boolean commentNumOrder;
 	private boolean viewsNumOrder;
 	private boolean likesNumOrder;
+	private BigInteger classcifyId;
 	@Override
 	public String toString() {
 		return "ArticleSearchForm [id=" + id + ", title=" + title
@@ -137,6 +138,12 @@ public class ArticleSearchForm {
 	}
 	public void setLikesNumOrder(boolean likesNumOrder) {
 		this.likesNumOrder = likesNumOrder;
+	}
+	public BigInteger getClasscifyId() {
+		return classcifyId;
+	}
+	public void setClasscifyId(BigInteger classcifyId) {
+		this.classcifyId = classcifyId;
 	}
 	
 	

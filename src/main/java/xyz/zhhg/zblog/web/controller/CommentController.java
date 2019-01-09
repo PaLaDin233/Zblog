@@ -34,7 +34,9 @@ public class CommentController extends BaseController{
 			comment.setUid(user.getId());
 		}
 		catch(Exception e){
-			
+			response.getWriter().write("请先登陆");
+			response.sendRedirect("/Zblog/login");
+			return ;
 		}
 		try{
 			commentService.discuss(comment, aid);
